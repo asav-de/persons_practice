@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final helloProvider = Provider<String>((ref) => 'Hallo');
+import 'package:persons_practice/providers/person_notivier.dart';
+import 'package:persons_practice/widgets/person_tile.dart';
 
 void main() {
-  runApp(const ProviderScope(
-    child: MyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
+
   @override
-  build(BuildContext context, WidgetRef ref){
+  Widget build(BuildContext context, WidgetRef ref) {
+    final persons = ref.watch(personsProvider);
+
     return Scaffold(
-      body: Center(child: Text(ref.watch(helloProvider)),) ,);
+      body: ListView.builder(
+        itemCount: persons.length,
+        itemBuilder: (context, index) {
+          final person = persons[index];
+          return PersonTile(
+            person: person,
+            onDelete: () => ref.read(personsProvider.notifier).removePerson(person.id),
+          );
+        },
+      ),
+    );
   }
 }
 

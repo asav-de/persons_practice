@@ -23,7 +23,7 @@
 - [x] `runApp(const ProviderScope(child: MyApp()))`
 - [x] `final helloProvider = Provider<String>((ref) => 'Hallo');` (вне классов)
 - [x] `HomeScreen extends ConsumerWidget`, `Text(ref.watch(helloProvider))`
-- [ ] мелочь: в `HomeScreen.build` дописать тип возврата `Widget`
+- [x] мелочь: в `HomeScreen.build` дописать тип возврата `Widget`
 
 ## Шаг 3. Notifier со списком
 `lib/providers/person_notivier.dart`
@@ -31,18 +31,18 @@
 - [x] `build()` возвращает 3 персоны с `_uuid.v4()`
 - [x] `personsProvider = NotifierProvider<PersonsNotifier, List<Person>>(PersonsNotifier.new)`
 - [x] `removePerson(String id)` → `state = state.where((p) => p.id != id).toList();`
-- [ ] **3а. проверка:** в `main.dart` импортировать notifier, вывести `Text('${ref.watch(personsProvider).length}')`, на экране должно быть **3**. Потом удалить `helloProvider`.
+- [x] **3а. проверка:** в `main.dart` импортировать notifier, вывести `Text('${ref.watch(personsProvider).length}')`, на экране должно быть **3**. Потом удалить `helloProvider`.
 
-## Шаг 4. Виджеты списка ← СЕЙЧАС ЗДЕСЬ
-- [ ] `lib/widgets/person_tile.dart`: `PersonTile extends StatelessWidget`
+## Шаг 4. Виджеты списка ✅
+- [x] `lib/widgets/person_tile.dart`: `PersonTile extends StatelessWidget`
   - поля `final Person person;`, `final VoidCallback onDelete;`
   - `ListTile(title: имя, subtitle: возраст, trailing: IconButton(🗑, onPressed: onDelete))`
-- [ ] `HomeScreen`: `final persons = ref.watch(personsProvider);` → `ListView.builder` с `PersonTile`
-- [ ] пока `onDelete: () {}`
+- [x] `HomeScreen`: `final persons = ref.watch(personsProvider);` → `ListView.builder` с `PersonTile`
+- [x] пока `onDelete: () {}`
 
-## Шаг 5. Удаление
-- [ ] `onDelete: () => ref.read(personsProvider.notifier).removePerson(person.id)`
-- [ ] понять разницу:
+## Шаг 5. Удаление ✅ (← дальше шаг 6)
+- [x] `onDelete: () => ref.read(personsProvider.notifier).removePerson(person.id)`
+- [x] понять разницу:
   - `ref.watch(provider)`: в `build`, подписка и перерисовка
   - `ref.read(provider.notifier)`: в колбэках, вызвать метод
 
@@ -73,6 +73,9 @@
 - провайдер нужен не каждому классу, а каждому куску общего состояния; модели (`Person`) провайдеров не имеют
 - методы, меняющие список (add/remove), лежат в Notifier, потому что `Person` не знает о списке
 - не использовать `as` для «получения» значения из провайдера, нужно `ref.watch(...)`
+- `.notifier` — объект класса `PersonsNotifier` (кладовщик), а не `Person`
+- `onDelete: () => f(x)` передаёт функцию на потом; `onDelete: f(x)` вызывает сразу во время build
+- `ref.read` лучше писать внутри колбэка, а не в `build`
 
 ## Вопросы для самопроверки перед ревью
 - Чем `Provider` отличается от `NotifierProvider`?
